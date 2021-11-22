@@ -23,12 +23,11 @@ public class TemperatureConsumingInitializer implements ApplicationListener<Appl
     @Override
     public void onApplicationEvent(ApplicationReadyEvent event) {
         temperatureDataConsumerTemplate.receiveAutoAck()
-                .doOnNext(record -> log.info("Received key={}, value={} from topic={}, offset={}",
+                .doOnNext(record -> log.info("Successfully consumed record [key={}, value={} from topic={}, offset={}]",
                         record.key(),
                         record.value(),
                         record.topic(),
                         record.offset()))
-                .doOnNext(data -> log.info("Successfully consumed {}={}", TemperatureData.class.getSimpleName(), data))
                 .doOnError(throwable -> log.error("Something bad happened while consuming.", throwable))
                 .subscribe();
     }

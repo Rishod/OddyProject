@@ -14,6 +14,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
+import reactor.core.publisher.Hooks;
 import reactor.core.publisher.Mono;
 
 import java.math.BigDecimal;
@@ -45,6 +46,8 @@ public class TemperatureSensor implements ApplicationRunner {
     }
 
     public void generateAndPushRandomData() {
+        Hooks.onErrorDropped(error -> log.warn("Connection closed"));
+
         Flux.interval(Duration.ofSeconds(1))
                 .map(tick -> this.generateRandomData())
                 .doOnNext(data -> log.info("Pushing temperature data [id: {}, value: {}]", data.getId(), data.getTemperature()))
