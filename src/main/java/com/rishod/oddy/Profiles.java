@@ -5,6 +5,7 @@ public final class Profiles {
     public static final String BACKEND = "backend";
     public static final String SENSOR = "sensor";
     public static final String STATISTIC_CALCULATOR = "statistic-calculator";
+    public static final String SCHEDULED_STATISTIC_CALCULATOR = "scheduled-statistic-calculator";
 
     private Profiles() {}
 }

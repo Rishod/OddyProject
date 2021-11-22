@@ -1,4 +1,4 @@
-package com.rishod.oddy;
+package com.rishod.oddy.backend;
 
 import static com.rishod.oddy.Profiles.BACKEND;
 
