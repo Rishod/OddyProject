@@ -20,11 +20,15 @@ repositories {
 
 dependencies {
   // Mongo
+  implementation 'org.springframework.boot:spring-boot-starter-data-mongodb-reactive'
+
   // Redis
 //  implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 //  implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
-  // Webflux
+
+  // Webflux/Spring
   implementation 'org.springframework.boot:spring-boot-starter-webflux'
+  implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
   // Kafka
   implementation 'org.springframework.kafka:spring-kafka'
@@ -42,3 +46,14 @@ dependencies {
 test {
   useJUnitPlatform()
 }
+
+task startInfrastructure(type: Exec) {
+  commandLine('sh', 'start-infrastructure.sh')
+}
+
+task stopInfrastructure(type: Exec) {
+  commandLine('sh', 'stop-infrastructure.sh')
+}
+
+build.dependsOn startInfrastructure
+clean.dependsOn stopInfrastructure
