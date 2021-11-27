@@ -47,13 +47,13 @@ test {
   useJUnitPlatform()
 }
 
-task startInfrastructure(type: Exec) {
-  commandLine('sh', 'start-infrastructure.sh')
-}
-
-task stopInfrastructure(type: Exec) {
-  commandLine('sh', 'stop-infrastructure.sh')
-}
-
-build.dependsOn startInfrastructure
-clean.dependsOn stopInfrastructure
+//task startInfrastructure(type: Exec) {
+//  commandLine('sh', 'start-infrastructure.sh')
+//}
+//
+//task stopInfrastructure(type: Exec) {
+//  commandLine('sh', 'stop-infrastructure.sh')
+//}
+//
+//build.dependsOn startInfrastructure
+//clean.dependsOn stopInfrastructure

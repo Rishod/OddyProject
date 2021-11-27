@@ -10,6 +10,7 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.ClientResponse;
@@ -48,32 +49,35 @@ public class TemperatureSensor implements ApplicationRunner {
 
     public void generateAndPushRandomData() {
         Hooks.onErrorDropped(error -> log.warn("Connection closed"));
-        while (true) {
-            final TemperatureData data = this.generateRandomData();
-            webClient.post()
-                    .uri(Endpoints.TEMPERATURE)
-                    .bodyValue(data)
-                    .exchangeToMono(clientResponse -> {
-                        log.info("HTTP status: {}", clientResponse.rawStatusCode());
-                        return clientResponse.releaseBody();
-                    })
-                    .subscribe(result -> log.info("Pushing temperature data [id: {}, value: {}]", data.getId(), data.getTemperature()));
+//        while (true) {
+//            final TemperatureData data = this.generateRandomData();
+//            webClient.post()
+//                    .uri(Endpoints.TEMPERATURE)
+//                    .bodyValue(data)
+//                    .retrieve()
+//                    .toBodilessEntity()
+//                    .doOnNext(response -> log.info("HTTP status: {}, Data ID {}", response.getStatusCode(), data.getId()))
+//                    .doOnError(error -> log.error("Something bad with sending data", error))
+//                    .subscribe();
+//
+//            try {
+//                Thread.sleep(2000);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
 
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-//        Flux.interval(Duration.ofSeconds(1))
-//                .map(tick -> this.generateRandomData())
-//                .doOnNext(data -> log.info("Pushing temperature data [id: {}, value: {}]", data.getId(), data.getTemperature()))
-//                .doOnError(throwable -> log.error("Something gone wrong no pushing data", throwable))
-//                .subscribe(data -> webClient.post()
-//                        .uri(Endpoints.TEMPERATURE)
-//                        .bodyValue(data)
-//                        .exchangeToMono(clientResponse -> Mono.empty()).subscribe());
+        Flux.interval(Duration.ofSeconds(1))
+                .map(tick -> this.generateRandomData())
+                .subscribe(data -> webClient.post()
+                        .uri(Endpoints.TEMPERATURE)
+                        .bodyValue(data)
+                        .retrieve()
+                        .toBodilessEntity()
+                        .doOnNext(response -> log.info("HTTP status: {}, Data ID {}", response.getStatusCode(), data.getId()))
+                        .doOnError(error -> log.error("Something bad with sending data", error))
+                        .subscribe()
+                );
 
 //        Flux<TemperatureData> temperatureDataFlux = Flux.interval(Duration.ofSeconds(1))
 //                .map(tick -> this.generateRandomData())
